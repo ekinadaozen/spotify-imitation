@@ -1,24 +1,70 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+/**
+ * Root layout — app entry point
+ * Sets up providers, loads fonts, handles auth routing, and renders global player
+ */
+import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { View, StyleSheet } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
+import { useAuthStore } from '../src/store/useAuthStore';
+import { useAudioPlayer } from '../src/hooks/useAudioPlayer';
+import { MiniPlayer } from '../src/components/player/MiniPlayer';
+import { FullPlayer } from '../src/components/player/FullPlayer';
+import { LoadingScreen } from '../src/components/common/LoadingScreen';
+import { Colors } from '../src/constants/colors';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+// Keep splash screen visible while loading
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const { isAuthenticated, isLoading, hydrate } = useAuthStore();
+
+  // Initialize audio player (connects to player store)
+  useAudioPlayer();
+
+  // Hydrate auth state on app launch
+  useEffect(() => {
+    hydrate().finally(() => {
+      SplashScreen.hideAsync();
+    });
+  }, [hydrate]);
+
+  if (isLoading) {
+    return <LoadingScreen message="Loading..." />;
+  }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+    <View style={styles.container}>
+      <StatusBar style="light" />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: Colors.background },
+          animation: 'fade',
+        }}
+      >
+        {isAuthenticated ? (
+          <Stack.Screen name="(tabs)" />
+        ) : (
+          <Stack.Screen name="(auth)" />
+        )}
       </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+
+      {/* Global player components (only when authenticated) */}
+      {isAuthenticated && (
+        <>
+          <MiniPlayer />
+          <FullPlayer />
+        </>
+      )}
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+});

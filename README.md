@@ -1,50 +1,95 @@
-# Welcome to your Expo app 👋
+# 🎵 Spotify Imitation
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A clean, beginner-friendly Spotify-inspired music streaming mobile app built with modern technologies.
 
-## Get started
+## 📱 Screenshots
 
-1. Install dependencies
+> Screenshots will be added once the app is running.
 
-   ```bash
-   npm install
-   ```
+## 🛠️ Tech Stack
 
-2. Start the app
+| Technology | Purpose |
+|------------|---------|
+| React Native + Expo | Cross-platform mobile framework |
+| TypeScript | Type-safe JavaScript |
+| Expo Router | File-based navigation |
+| Zustand | Lightweight state management |
+| Supabase | Backend-as-a-Service (auth, database) |
+| Spotify Web API | Music data and streaming |
+| expo-audio | Audio playback |
+| react-native-reanimated | Smooth animations |
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## 🚀 Quick Start
 
 ```bash
-npm run reset-project
+# 1. Clone the repo
+git clone <repo-url>
+cd spotify-imitation
+
+# 2. Install dependencies
+npm install
+
+# 3. Set up environment variables
+cp .env.example .env
+# Fill in your Supabase and Spotify credentials
+
+# 4. Start the dev server
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+> **Note:** Spotify OAuth requires a Development Build, not Expo Go.
+> Run `npx expo prebuild` and build with EAS or locally.
 
-## Learn more
+## 📁 Project Structure
 
-To learn more about developing your project with Expo, look at the following resources:
+```
+app/           → Expo Router screens and layouts
+src/
+  components/  → Reusable UI components
+  services/    → API layer (Spotify, Supabase, Auth)
+  store/       → Zustand state stores
+  hooks/       → Custom React hooks
+  types/       → TypeScript type definitions
+  constants/   → Colors, spacing, typography, API config
+  utils/       → Helper functions
+docs/          → Project documentation
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## 📚 Documentation
 
-## Join the community
+| Document | Description |
+|----------|-------------|
+| [Setup Guide](docs/SETUP_GUIDE.md) | Step-by-step setup instructions |
+| [Architecture](docs/ARCHITECTURE.md) | App architecture overview |
+| [Development Guide](docs/DEVELOPMENT_GUIDE.md) | Coding standards & workflow |
+| [API Documentation](docs/API_DOCUMENTATION.md) | Spotify API endpoints used |
+| [Supabase Setup](docs/SUPABASE_SETUP.md) | Database schema & RLS |
+| [Spotify API Setup](docs/SPOTIFY_API_SETUP.md) | OAuth configuration |
+| [Features](docs/FEATURES.md) | Feature list & status |
+| [UI/UX Guidelines](docs/UI_UX_GUIDELINES.md) | Design system docs |
+| [Troubleshooting](docs/TROUBLESHOOTING.md) | Common issues & fixes |
+| [Deployment](docs/DEPLOYMENT_GUIDE.md) | EAS Build & deployment |
+| [Contributing](docs/CONTRIBUTING.md) | Contribution guidelines |
+| [Roadmap](docs/ROADMAP.md) | Future plans |
+| [Changelog](docs/CHANGELOG.md) | Version history |
 
-Join our community of developers creating universal apps.
+## 🔑 Key Features
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- ✅ Spotify OAuth login (PKCE flow)
+- ✅ Home screen with personalized content
+- ✅ Search songs, artists, albums
+- ✅ Mini player & full-screen player
+- ✅ Like songs (saved to Supabase)
+- ✅ Create & manage playlists
+- ✅ Recently played
+- ✅ User profile
+- ✅ Dark modern UI
+- ✅ Smooth animations
+
+## 📄 License
+
+MIT License. See [LICENSE](LICENSE) for details.
+
+---
+
+Built with ❤️ using React Native & Expo
