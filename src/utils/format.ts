@@ -72,3 +72,27 @@ export function formatArtists(
 ): string {
   return artists.map((a) => a.name).join(', ');
 }
+
+/**
+ * Converts any string (like a Spotify user ID) into a valid UUID format.
+ * This is required when storing data in Supabase if the column type is uuid.
+ */
+export function stringToUuid(str: string): string {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  
+  const hex1 = Math.abs(hash).toString(16).padStart(8, '0');
+  const hex2 = Math.abs(hash * 31).toString(16).padStart(8, '0');
+  const hex3 = Math.abs(hash * 17).toString(16).padStart(8, '0');
+  const hex4 = Math.abs(hash * 7).toString(16).padStart(8, '0');
+  
+  const fullHex = (hex1 + hex2 + hex3 + hex4).padEnd(32, '0');
+  
+  // UUID format: 8-4-4-4-12
+  // We'll set the version to 4 (random) just to make it a valid-looking UUID
+  const uuid = `${fullHex.slice(0, 8)}-${fullHex.slice(8, 12)}-4${fullHex.slice(13, 16)}-8${fullHex.slice(17, 20)}-${fullHex.slice(20, 32)}`;
+  return uuid;
+}

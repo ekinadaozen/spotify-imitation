@@ -127,6 +127,13 @@ export const usePlayerStore = create<PlayerState>()((set, get) => ({
   closeFullPlayer: () => set({ isFullPlayerOpen: false }),
 
   playTrackFromList: (track, tracks) => {
+    if (!track.preview_url) {
+      import('react-native').then(({ Alert }) => {
+        Alert.alert('Preview Not Available', 'Spotify does not provide an audio preview for this track.');
+      });
+      return;
+    }
+
     const index = tracks.findIndex((t) => t.id === track.id);
     set({
       currentTrack: track,

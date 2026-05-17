@@ -6,6 +6,7 @@ import { create } from 'zustand';
 import { supabase } from '../services/supabase';
 import type { LikedSong, UserPlaylist, PlaylistTrack } from '../types/supabase';
 import type { SpotifyTrack } from '../types/spotify';
+import { stringToUuid } from '../utils/format';
 
 interface LibraryState {
   likedSongs: LikedSong[];
@@ -38,10 +39,11 @@ export const useLibraryStore = create<LibraryState>()((set, get) => ({
   fetchLikedSongs: async (userId) => {
     try {
       set({ isLoading: true, error: null });
+      const uuid = stringToUuid(userId);
       const { data, error } = await supabase
         .from('liked_songs')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', uuid)
         .order('liked_at', { ascending: false });
 
       if (error) throw error;
@@ -57,10 +59,11 @@ export const useLibraryStore = create<LibraryState>()((set, get) => ({
   fetchPlaylists: async (userId) => {
     try {
       set({ isLoading: true, error: null });
+      const uuid = stringToUuid(userId);
       const { data, error } = await supabase
         .from('playlists')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', uuid)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -81,10 +84,11 @@ export const useLibraryStore = create<LibraryState>()((set, get) => ({
 
     if (isCurrentlyLiked) {
       // Unlike
+      const uuid = stringToUuid(userId);
       const { error } = await supabase
         .from('liked_songs')
         .delete()
-        .eq('user_id', userId)
+        .eq('user_id', uuid)
         .eq('spotify_track_id', track.id);
 
       if (!error) {
@@ -99,7 +103,7 @@ export const useLibraryStore = create<LibraryState>()((set, get) => ({
     } else {
       // Like
       const newLike = {
-        user_id: userId,
+        user_id: stringToUuid(userId),
         spotify_track_id: track.id,
         track_name: track.name,
         artist_name: track.artists.map((a) => a.name).join(', '),
@@ -132,7 +136,7 @@ export const useLibraryStore = create<LibraryState>()((set, get) => ({
     const { data, error } = await supabase
       .from('playlists')
       .insert({
-        user_id: userId,
+        user_id: stringToUuid(userId),
         name,
         description: description ?? null,
         cover_image_url: null,
