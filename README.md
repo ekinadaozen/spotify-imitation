@@ -1,12 +1,12 @@
-# 🎵 Spotify Imitation
+#  Spotify Imitation
 
 A clean, beginner-friendly Spotify-inspired music streaming mobile app built with modern technologies.
 
-## 📱 Screenshots
+##  Screenshots
 
 > Screenshots will be added once the app is running.
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Technology | Purpose |
 |------------|---------|
