@@ -62,7 +62,7 @@ export const useAuthStore = create<AuthState>()(
           const { accessToken } = await getSpotifyTokens();
 
           if (!accessToken) {
-            set({ isLoading: false });
+            set({ isLoading: false, isAuthenticated: false, user: null });
             return;
           }
 
@@ -73,7 +73,7 @@ export const useAuthStore = create<AuthState>()(
           if (expired) {
             const newToken = await refreshAccessToken();
             if (!newToken) {
-              set({ isLoading: false, isAuthenticated: false });
+              set({ isLoading: false, isAuthenticated: false, user: null });
               return;
             }
             validToken = newToken;
@@ -88,7 +88,7 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
           });
         } catch {
-          set({ isLoading: false, isAuthenticated: false });
+          set({ isLoading: false, isAuthenticated: false, user: null });
         }
       },
 

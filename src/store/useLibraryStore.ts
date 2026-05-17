@@ -93,6 +93,8 @@ export const useLibraryStore = create<LibraryState>()((set, get) => ({
             (s) => s.spotify_track_id !== track.id
           ),
         });
+      } else {
+        console.error('Error unliking song:', error);
       }
     } else {
       // Like
@@ -115,6 +117,8 @@ export const useLibraryStore = create<LibraryState>()((set, get) => ({
 
       if (!error && data) {
         set({ likedSongs: [data, ...likedSongs] });
+      } else if (error) {
+        console.error('Error liking song:', error);
       }
     }
   },

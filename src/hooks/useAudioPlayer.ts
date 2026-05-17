@@ -1,9 +1,5 @@
-/**
- * Audio player hook
- * Wraps expo-audio for simple playback control, synced with player store
- */
 import { useEffect, useRef, useCallback } from 'react';
-import { useAudioPlayer as useExpoAudioPlayer, AudioModule } from 'expo-audio';
+import { useAudioPlayer as useExpoAudioPlayer, useAudioPlayerStatus, AudioModule } from 'expo-audio';
 import { usePlayerStore } from '../store/usePlayerStore';
 
 export function useAudioPlayer() {
@@ -14,33 +10,35 @@ export function useAudioPlayer() {
     setPosition,
     setDuration,
     next,
-    pause,
   } = usePlayerStore();
 
   const prevTrackIdRef = useRef<string | null>(null);
-  const player = useExpoAudioPlayer(currentTrack?.preview_url ?? '');
+  
+  // Use null instead of empty string if preview_url is missing
+  const player = useExpoAudioPlayer(currentTrack?.preview_url ?? null);
+  const status = useAudioPlayerStatus(player);
 
   // Configure audio mode for playback
   useEffect(() => {
     AudioModule.setAudioModeAsync({
       playsInSilentMode: true,
+      interruptionMode: 'mixWithOthers',
+      allowsRecording: false,
+      shouldPlayInBackground: false,
     });
   }, []);
 
-  // When track changes, load new audio
+  // When track changes, play it if it's new
   useEffect(() => {
     if (!currentTrack?.preview_url) return;
     if (currentTrack.id === prevTrackIdRef.current) return;
 
     prevTrackIdRef.current = currentTrack.id;
 
-    // The useAudioPlayer hook auto-loads when source changes
-    // We just need to play
     try {
-      player.seekTo(0);
       player.play();
-    } catch {
-      // Player might not be ready yet
+    } catch (e) {
+      console.error('Error playing new track:', e);
     }
   }, [currentTrack, player]);
 
@@ -49,62 +47,45 @@ export function useAudioPlayer() {
     if (!currentTrack?.preview_url) return;
 
     try {
-      if (isPlaying) {
+      if (isPlaying && !status.playing && status.isLoaded) {
         player.play();
-      } else {
+      } else if (!isPlaying && status.playing) {
         player.pause();
       }
-    } catch {
-      // Player might not be ready
+    } catch (e) {
+      console.error('Error syncing play state:', e);
     }
-  }, [isPlaying, player, currentTrack]);
+  }, [isPlaying, player, currentTrack, status.playing, status.isLoaded]);
 
-  // Update position periodically
+  // Update position reactively from status
   useEffect(() => {
-    if (!isPlaying) return;
-
-    const interval = setInterval(() => {
-      try {
-        setPosition(player.currentTime);
-        setDuration(player.duration);
-      } catch {
-        // Ignore if player not ready
-      }
-    }, 500);
-
-    return () => clearInterval(interval);
-  }, [isPlaying, player, setPosition, setDuration]);
+    if (status.currentTime !== undefined) {
+      setPosition(status.currentTime);
+    }
+    if (status.duration !== undefined && status.duration > 0) {
+      setDuration(status.duration);
+    }
+  }, [status.currentTime, status.duration, setPosition, setDuration]);
 
   // Handle track end
   useEffect(() => {
-    const checkEnd = setInterval(() => {
-      try {
-        if (
-          player.duration > 0 &&
-          player.currentTime >= player.duration - 0.5
-        ) {
-          if (repeat === 'track') {
-            player.seekTo(0);
-            player.play();
-          } else {
-            next();
-          }
-        }
-      } catch {
-        // Ignore
+    if (status.didJustFinish) {
+      if (repeat === 'track') {
+        player.seekTo(0);
+        player.play();
+      } else {
+        next();
       }
-    }, 1000);
-
-    return () => clearInterval(checkEnd);
-  }, [player, repeat, next]);
+    }
+  }, [status.didJustFinish, player, repeat, next]);
 
   const seekTo = useCallback(
     (position: number) => {
       try {
         player.seekTo(position);
         setPosition(position);
-      } catch {
-        // Ignore
+      } catch (e) {
+        console.error('Error seeking:', e);
       }
     },
     [player, setPosition]
@@ -112,6 +93,6 @@ export function useAudioPlayer() {
 
   return {
     seekTo,
-    isReady: !!currentTrack?.preview_url,
+    isReady: status.isLoaded,
   };
 }

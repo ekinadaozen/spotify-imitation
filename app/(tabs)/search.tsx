@@ -63,7 +63,11 @@ export default function SearchScreen() {
         setTracks(r.tracks?.items ?? []);
         setArtists(r.artists?.items ?? []);
         setAlbums(r.albums?.items ?? []);
-      } catch { /* silent */ } finally { setIsSearching(false); }
+      } catch (error) {
+        console.error('Search error:', error);
+      } finally {
+        setIsSearching(false);
+      }
     }, 400);
   }, [callSpotify]);
 
