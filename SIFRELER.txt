@@ -1,0 +1,4 @@
+database şifre: Ekinoadao/8/8
+client if: 109b08436c2a41d0b166072ae7f42338
+client secret: 61be525b806541528fd64356b0bca45c
+anon key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImthaWxkeXhjY3Rna2hnbGdobm1qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NTU5OTMsImV4cCI6MjA5NDUzMTk5M30.XTQ8Z2ij5wPn1q6grWufHjiym-iKrq_hIy7EkhHOTlk
